@@ -64,6 +64,7 @@
   background-color: var(--form__item-bg, #0ccab74f);
   border-radius: 17px;
   cursor: pointer;
+  visibility: visible;
 }
 
 .form__item:hover {
