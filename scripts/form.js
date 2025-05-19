@@ -39,15 +39,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const allValid = Object.values(validationState).every(state => state);
         submitButton.disabled = !allValid;
         
+        submitButton.style.visibility = 'visible';
+        submitButton.style.display = 'block'; 
+        submitButton.style.opacity = allValid ? '1' : '0.5';
+        submitButton.style.pointerEvents = allValid ? 'auto' : 'none';
+        
         if (allValid) {
             submitButton.classList.add('form__button-active');
-            submitButton.style.visibility = 'visible';
         } else {
             submitButton.classList.remove('form__button-active');
         }
-
-        submitButton.style.visibility = 'visible';
-        submitButton.style.opacity = allValid ? '1' : '0.5';
     }
 
     function showError(input, message) {
@@ -110,11 +111,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function validateEmail(email) {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        email = email.trim();
+        
+        const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+        
+        if (!email) {
+            showError(emailInput, 'Поле "Электронный адрес" обязательно для заполнения.');
+            return false;
+        }
+        
+        if (email.length > 254) {
+            showError(emailInput, 'Email-адрес слишком длинный (максимум 254 символа).');
+            return false;
+        }
         
         if (!regex.test(email)) {
-            showError(emailInput, 'Пожалуйста, введите корректный email (например, user@example.com).');
+            showError(emailInput, 'Введите корректный email-адрес (например: example@domain.com).');
             return false;
+        }
+        
+        const parts = email.split('@');
+        if (parts[0].length > 64) {
+            showError(emailInput, 'Локальная часть email-адреса слишком длинная (максимум 64 символа).');
+            return false;
+        }
+        
+        const domainParts = parts[1].split('.');
+        if (domainParts.some(part => part.length > 63)) {
+            showError(emailInput, 'Часть домена email-адреса слишком длинная (максимум 63 символа на часть).');
+            return false;
+        }
+        
+        const commonTypos = {
+            'gmail.com': ['gmial.com', 'gamil.com', 'gmal.com'],
+            'yahoo.com': ['yaho.com', 'yahooo.com'],
+            'outlook.com': ['outlok.com', 'outook.com'],
+            'mail.ru': ['mai.ru', 'maill.ru']
+        };
+        
+        const domain = parts[1].toLowerCase();
+        for (const [correctDomain, typos] of Object.entries(commonTypos)) {
+            if (typos.includes(domain)) {
+                showError(emailInput, `Возможно, вы имели в виду ${parts[0]}@${correctDomain}?`);
+                return false;
+            }
         }
         
         hideError(emailInput);
@@ -256,6 +296,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    submitButton.style.visibility = 'visible';
+    window.addEventListener('resize', function() {
+        submitButton.style.visibility = 'visible';
+        submitButton.style.display = 'block';
+    });
     checkFormValidity();
 });

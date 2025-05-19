@@ -170,6 +170,7 @@
 @media (orientation: landscape) and (max-height: 414px) {
   .page {
     flex-direction: row;
+    inline-size: 100dvw;
   }
 
   .form {
