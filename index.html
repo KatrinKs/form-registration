@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Форма регистрации</title>
+        <meta name="description"
+              content="Страница с формой регистрации">
+        <link rel="stylesheet" href="./styles/variables.css">
+        <link rel="stylesheet" href="./styles/globals.css">
+        <link rel="stylesheet" href="./styles/style.css">
+        <link rel="stylesheet" href="./styles/cross_browser.css">
+    </head>
+    <body>
+        <div class="page">
+            <div id="fireflies-container"></div>
+            <form class="form" action="#" method="post">
+                <h2 class="form__heading">Регистрация</h2>
+
+                <label for="first-name" class="visually-hidden">Имя</label>
+                <input type="text" placeholder="Имя" id="first-name" class="form__item" required>
+
+                <label for="last-name" class="visually-hidden">Фамилия</label>
+                <input type="text" placeholder="Фамилия" id="last-name" class="form__item" required>
+
+                <label for="email" class="visually-hidden">Email</label>
+                <input type="email" placeholder="Email" id="email" class="form__item" required>
+
+                <label for="password" class="visually-hidden">Пароль</label>
+                <input type="password" placeholder="Пароль" id="password" class="form__item" required>
+
+                <label for="password-confirm" class="visually-hidden">Подтверждение пароля</label>
+                <input type="password" placeholder="Подтверждение пароля" id="password-confirm" class="form__item" required>
+
+                <label for="birth-day" class="visually-hidden">Дата рождения</label>
+                <input type="date" id="birth-day" class="form__item" required>
+
+                <button class="form__button" id="form-button">
+                    Отправить
+                </button>
+            </form>
+            <footer class="footer">
+                <p class="footer__text">Сделано Кальнеус Екатериной, 2025г.</p>
+            </footer>
+        </div>
+        <script src="./scripts/firefly.js"></script>
+        <script src="./scripts/form.js"></script>
+    </body>
+</html>

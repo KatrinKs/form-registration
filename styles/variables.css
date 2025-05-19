@@ -1,0 +1,27 @@
+:root {
+  --main-bg: #06685e;
+  --main-color: #89d2cb;
+  --accent-color: #89d2cb;
+
+  --firefly-bg: #f3e98385;
+  --firefly-shadow: 0 0 30px 10px #a7ac68;
+
+  --symbols-count: 50;
+  --symbols-size: 16px;
+
+  --form-bg: #011c1a;
+  --form-color: #000;
+  --form-font-size: calc(
+    var(--symbols-count, 50) * var(--symbols-size, 16px) / 2.5
+  );
+
+  --form__item-bg: #0ccab74f;
+  --placeholder-bg: #c0ebe7;
+  --form__item-hover-shadow: 0px 1px 10px 4px #e9e7e726;
+  --form__item-focus-shadow: 0px 1px 10px 4px #a7ac68;
+  --form__button-size: clamp(1rem, 0.868rem + 0.5634vw, 1.375rem);
+
+  --footer-bg: #011c1a91;
+  --footer-color: #9fc1be;
+  --footer-font-size: 20px;
+}
