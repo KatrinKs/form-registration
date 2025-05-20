@@ -1,7 +1,8 @@
 .page {
   display: flex;
   flex-direction: column;
-  block-size: 100dvh;
+  block-size: 100vh;
+  /* block-size: calc(var(--vh, 1vh) * 100); */
   position: relative;
   overflow: hidden;
 }
@@ -178,6 +179,12 @@
   .form {
     inline-size: 100%;
     border-radius: 0;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  .page {
+    height: -webkit-fill-available;
   }
 }
 
