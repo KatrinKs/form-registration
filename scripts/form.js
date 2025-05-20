@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function restoreValues() {
         const inputs = [firstNameInput, lastNameInput, emailInput, passwordInput, passwordConfirmInput, birthDayInput];
         inputs.forEach(input => {
-            const savedValue = localStorage.getItem(input.id);
+            const savedValue = sessionStorage.getItem(input.id);
             if (savedValue) {
                 input.value = savedValue;
-                validateField(input);
+                validateField(input, true);
             }
         });
     }
@@ -39,80 +39,82 @@ document.addEventListener('DOMContentLoaded', function() {
         const allValid = Object.values(validationState).every(state => state);
         submitButton.disabled = !allValid;
         
-        submitButton.style.visibility = 'visible';
-        submitButton.style.display = 'block'; 
-        submitButton.style.opacity = allValid ? '1' : '0.5';
-        submitButton.style.pointerEvents = allValid ? 'auto' : 'none';
-        
         if (allValid) {
-            submitButton.classList.add('form__button-active');
+            form.classList.add('valid');
+            form.classList.remove('invalid');
+            submitButton.classList.add('valid', 'form__button-active');
+            submitButton.classList.remove('invalid');
         } else {
-            submitButton.classList.remove('form__button-active');
+            form.classList.add('invalid');
+            form.classList.remove('valid');
+            submitButton.classList.add('invalid');
+            submitButton.classList.remove('valid', 'form__button-active');
         }
     }
 
     function showError(input, message) {
-        const errorElement = input.nextElementSibling || document.createElement('div');
-        if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('error-message')) {
+        let errorElement = input.nextElementSibling;
+        
+        if (!errorElement || !errorElement.classList.contains('error-message')) {
+            errorElement = document.createElement('div');
             errorElement.className = 'error-message';
             errorElement.style.color = 'rgb(224, 209, 113)';
             errorElement.style.fontSize = '0.8rem';
             errorElement.style.marginTop = '-10px';
             errorElement.style.marginBottom = '5px';
-            input.after(errorElement);
+            input.insertAdjacentElement('afterend', errorElement);
         }
+        
         errorElement.textContent = message;
-        input.style.border = '1px solid rgb(224, 209, 113)';
-
         input.classList.remove('valid');
         input.classList.add('invalid');
-        form.classList.add('invalid');
     }
 
     function hideError(input) {
-        if (input.nextElementSibling && input.nextElementSibling.classList.contains('error-message')) {
-            input.nextElementSibling.remove();
+        const errorElement = input.nextElementSibling;
+        if (errorElement && errorElement.classList.contains('error-message')) {
+            errorElement.remove();
         }
-        input.style.border = 'none';
         input.classList.remove('invalid');
-        input.classList.add('valid');
-
-        if (Object.values(validationState).every(state => state)) {
-            form.classList.remove('invalid');
-            form.classList.add('valid');
+        if (input.value.trim()) {
+            input.classList.add('valid');
+        } else {
+            input.classList.remove('valid');
         }
     }
 
     function validateName(name, fieldName) {
         const regex = /^[a-zA-Zа-яА-ЯёЁ'\-\s]+$/;
+        const input = fieldName === 'firstName' ? firstNameInput : lastNameInput;
+        const fieldDisplayName = fieldName === 'firstName' ? 'имя' : 'фамилия';
+        name = name.trim();
 
-        // Есть люди с короткими именами и фамилиями. Например, Игорь И
-        if (name.length < 1) {
-            showError(fieldName === 'firstName' ? firstNameInput : lastNameInput, 
-                     `Слишком короткое ${fieldName === 'firstName' ? 'имя' : 'фамилия'}. Не менее 1 символа.`);  
+        if (!name) {
+            showError(input, `Поле "${fieldDisplayName}" обязательно для заполнения.`);
             return false;
         }
         
-        // Такая длина охватывает практически все существующие имена и фамилии
+        if (name.length < 1) {
+            showError(input, `Слишком короткое ${fieldDisplayName}. Не менее 1 символа.`);  
+            return false;
+        }
+        
         if (name.length > 50) {
-            showError(fieldName === 'firstName' ? firstNameInput : lastNameInput, 
-                     `Слишком длинное ${fieldName === 'firstName' ? 'имя' : 'фамилия'}. Не более 50 символов.`);
+            showError(input, `Слишком длинное ${fieldDisplayName}. Не более 50 символов.`);
             return false;
         }
         
         if (!regex.test(name)) {
-            showError(fieldName === 'firstName' ? firstNameInput : lastNameInput, 
-                     `Недопустимые символы в ${fieldName === 'firstName' ? 'имени' : 'фамилии'}.`);
+            showError(input, `Недопустимые символы в ${fieldDisplayName}.`);
             return false;
         }
         
-        hideError(fieldName === 'firstName' ? firstNameInput : lastNameInput);
+        hideError(input);
         return true;
     }
 
     function validateEmail(email) {
         email = email.trim();
-        
         const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
         
         if (!email) {
@@ -130,41 +132,17 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         
-        const parts = email.split('@');
-        if (parts[0].length > 64) {
-            showError(emailInput, 'Локальная часть email-адреса слишком длинная (максимум 64 символа).');
-            return false;
-        }
-        
-        const domainParts = parts[1].split('.');
-        if (domainParts.some(part => part.length > 63)) {
-            showError(emailInput, 'Часть домена email-адреса слишком длинная (максимум 63 символа на часть).');
-            return false;
-        }
-        
-        const commonTypos = {
-            'gmail.com': ['gmial.com', 'gamil.com', 'gmal.com'],
-            'yahoo.com': ['yaho.com', 'yahooo.com'],
-            'outlook.com': ['outlok.com', 'outook.com'],
-            'mail.ru': ['mai.ru', 'maill.ru']
-        };
-        
-        const domain = parts[1].toLowerCase();
-        for (const [correctDomain, typos] of Object.entries(commonTypos)) {
-            if (typos.includes(domain)) {
-                showError(emailInput, `Возможно, вы имели в виду ${parts[0]}@${correctDomain}?`);
-                return false;
-            }
-        }
-        
         hideError(emailInput);
         return true;
     }
 
     function validatePassword(password) {
+        password = password.trim();
         let errorMessage = '';
         
-        if (password.length < 8) {
+        if (!password) {
+            errorMessage = 'Поле "Пароль" обязательно для заполнения.';
+        } else if (password.length < 8) {
             errorMessage = 'Пароль должен содержать минимум 8 символов.';
         } else if (!/\d/.test(password)) {
             errorMessage = 'Пароль должен содержать хотя бы одну цифру.';
@@ -186,6 +164,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function validatePasswordConfirm(password, passwordConfirm) {
+        passwordConfirm = passwordConfirm.trim();
+        
+        if (!passwordConfirm) {
+            showError(passwordConfirmInput, 'Пожалуйста, подтвердите пароль.');
+            return false;
+        }
+        
         if (password !== passwordConfirm) {
             showError(passwordConfirmInput, 'Пароли не совпадают.');
             return false;
@@ -215,27 +200,23 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         
-        if (age > 200) {
-            showError(birthDayInput, 'Вы не можете быть старше 200 лет.');
-            return false;
-        }
-        
         hideError(birthDayInput);
         return true;
     }
 
-    function validateField(input) {
+    function validateField(input, initialLoad = false) {
         if (input === firstNameInput) {
-            input.value = capitalizeFirstLetter(input.value);
+            input.value = capitalizeFirstLetter(input.value.trim());
             validationState.firstName = validateName(input.value, 'firstName');
         } else if (input === lastNameInput) {
-            input.value = capitalizeFirstLetter(input.value);
+            input.value = capitalizeFirstLetter(input.value.trim());
             validationState.lastName = validateName(input.value, 'lastName');
         } else if (input === emailInput) {
             validationState.email = validateEmail(input.value);
         } else if (input === passwordInput) {
-            validationState.password = validatePassword(input.value);
-            if (passwordConfirmInput.value) {
+            const passwordValid = validatePassword(input.value);
+            validationState.password = passwordValid;
+            if (passwordValid || !initialLoad) {
                 validationState.passwordConfirm = validatePasswordConfirm(input.value, passwordConfirmInput.value);
             }
         } else if (input === passwordConfirmInput) {
@@ -244,61 +225,51 @@ document.addEventListener('DOMContentLoaded', function() {
             validationState.birthDay = validateBirthDay(input.value);
         }
         
+        sessionStorage.setItem(input.id, input.value);
         checkFormValidity();
     }
 
     const inputs = [firstNameInput, lastNameInput, emailInput, passwordInput, passwordConfirmInput, birthDayInput];
 
-     inputs.forEach(input => {
+    inputs.forEach(input => {
         input.addEventListener('input', function() {
-            localStorage.setItem(this.id, this.value); 
             validateField(this);
         });
 
         input.addEventListener('blur', function() {
-            localStorage.setItem(this.id, this.value); 
             validateField(this);
         });
-
-        input.addEventListener('keydown', function(e) {
-            if (e.key === 'Tab') {
-                validateField(this);
-                setTimeout(() => {
-                    checkFormValidity();
-                    submitButton.style.visibility = 'visible';
-                }, 10);
-            }
-        });
     });
-
-    submitButton.addEventListener('focus', function() {
-        this.style.visibility = 'visible';
-        this.style.opacity = '1';
-    });
-
-    submitButton.tabIndex = 0;
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        inputs.forEach(input => validateField(input));
         
         if (Object.values(validationState).every(state => state)) {
             alert('Форма успешно отправлена!');
             form.reset();
             
             inputs.forEach(input => {
-                localStorage.removeItem(input.id);
+                sessionStorage.removeItem(input.id);
+                input.classList.remove('valid');
+                input.classList.remove('invalid');
+                const errorElement = input.nextElementSibling;
+                if (errorElement && errorElement.classList.contains('error-message')) {
+                    errorElement.remove();
+                }
             });
             
             Object.keys(validationState).forEach(key => {
                 validationState[key] = false;
             });
+            
             checkFormValidity();
         }
     });
 
-    window.addEventListener('resize', function() {
-        submitButton.style.visibility = 'visible';
-        submitButton.style.display = 'block';
+    inputs.forEach(input => {
+        if (input.value) validateField(input, true);
     });
     checkFormValidity();
 });
