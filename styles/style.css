@@ -205,6 +205,10 @@
     border-radius: 0;
   }
 
+  .form__item {
+    block-size: 39px;
+  }
+
   .date-content {
     gap: 2%;
     padding-inline-start: 5px;
