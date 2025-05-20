@@ -6,14 +6,7 @@
   --firefly-bg: #f3e98385;
   --firefly-shadow: 0 0 30px 10px #a7ac68;
 
-  --symbols-count: 50;
-  --symbols-size: 16px;
-
   --form-bg: #011c1a;
-  --form-color: #000;
-  --form-font-size: calc(
-    var(--symbols-count, 50) * var(--symbols-size, 16px) / 2.5
-  );
 
   --form__item-bg: #0ccab74f;
   --placeholder-bg: #c0ebe7;
@@ -23,5 +16,4 @@
 
   --footer-bg: #011c1a91;
   --footer-color: #9fc1be;
-  --footer-font-size: 20px;
 }

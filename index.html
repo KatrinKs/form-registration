@@ -16,56 +16,66 @@
       <form class="form" action="#" method="post">
         <h2 class="form__heading">Регистрация</h2>
 
-        <label for="first-name" class="visually-hidden">Имя</label>
-        <input
-          type="text"
-          placeholder="Имя"
-          id="first-name"
-          class="form__item"
-          required
-        >
+        <div class="form__group">
+          <label for="first-name" class="visually-hidden">Имя</label>
+          <input
+            type="text"
+            placeholder="Имя"
+            id="first-name"
+            class="form__item"
+            required
+          >
+        </div>
 
-        <label for="last-name" class="visually-hidden">Фамилия</label>
-        <input
-          type="text"
-          placeholder="Фамилия"
-          id="last-name"
-          class="form__item"
-          required
-        >
+        <div class="form__group">
+          <label for="last-name" class="visually-hidden">Фамилия</label>
+          <input
+            type="text"
+            placeholder="Фамилия"
+            id="last-name"
+            class="form__item"
+            required
+          >
+        </div>
 
-        <label for="email" class="visually-hidden">Email</label>
-        <input
-          type="email"
-          placeholder="Email"
-          id="email"
-          autocomplete="email"
-          class="form__item"
-          required
-        >
+        <div class="form__group">
+          <label for="email" class="visually-hidden">Email</label>
+          <input
+            type="email"
+            placeholder="Email"
+            id="email"
+            autocomplete="email"
+            class="form__item"
+            required
+          >
+        </div>
 
-        <label for="password" class="visually-hidden">Пароль</label>
-        <input
-          type="password"
-          placeholder="Пароль"
-          id="password"
-          class="form__item"
-          required
-        >
+        <div class="form__group">
+          <label for="password" class="visually-hidden">Пароль</label>
+          <input
+            type="password"
+            placeholder="Пароль"
+            id="password"
+            class="form__item"
+            required
+          >
+        </div>
 
-        <label for="password-confirm" class="visually-hidden"
-          >Подтверждение пароля</label
-        >
-        <input
-          type="password"
-          placeholder="Подтверждение пароля"
-          id="password-confirm"
-          class="form__item"
-          required
-        >
+        <div class="form__group">
+          <label for="password-confirm" class="visually-hidden"
+            >Подтверждение пароля</label
+          >
+          <input
+            type="password"
+            placeholder="Подтверждение пароля"
+            id="password-confirm"
+            class="form__item"
+            required
+          >
+        </div>
 
-        <div class="date-content">
-          <label for="birth-day" class="date-placeholder">Дата рождения</label>
+        <div class="form__group date-content">
+          <label for="birth-day">Дата рождения</label>
           <input type="date" id="birth-day" class="form__item" required>
         </div>
 
