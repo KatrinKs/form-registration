@@ -186,21 +186,21 @@ document.addEventListener('DOMContentLoaded', function() {
       return false;
     }
         
-  const birthDate = new Date(date);
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
+    const birthDate = new Date(date);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
         
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
         
-  if (age < 18) {
-    showError(birthDayInput, 'Вы должны быть старше 18 лет.');
-    return false;
-  }
+    if (age < 18) {
+      showError(birthDayInput, 'Вы должны быть старше 18 лет.');
+      return false;
+    }
         
-  hideError(birthDayInput);
+    hideError(birthDayInput);
     return true;
   }
 
@@ -233,11 +233,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   inputs.forEach(input => {
     input.addEventListener('input', function() {
-    validateField(this);
-  });
+      validateField(this);
+    });
 
-  input.addEventListener('blur', function() {
-    validateField(this);
+    input.addEventListener('blur', function() {
+      validateField(this);
     });
   });
 
